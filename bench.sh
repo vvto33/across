@@ -84,10 +84,10 @@ speed() {
     speed_test '27594' 'Guangzhou  CT'
     speed_test '26678' 'Guangzhou  CU'
     speed_test '16192' 'Shenzhen   CU'
-    speed_test '4515'  'Shenzhen   CM'
+    speed_test '28491' 'HuNan 5G   CM'
     speed_test '32155' 'Hongkong   CN'
     speed_test '13623' 'Singapore  SG'
-    speed_test '15047' 'Tokyo      JP'
+    speed_test '21569' 'Tokyo      JP'
 }
 
 io_test() {
