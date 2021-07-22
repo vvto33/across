@@ -59,7 +59,7 @@ get_opsy() {
 }
 
 next() {
-    printf "%-70s\n" "-" | sed 's/\s/-/g'
+    printf "%-150s\n" "-" | sed 's/\s/-/g'
 }
 
 speed_test() {
@@ -70,8 +70,9 @@ speed_test() {
         local dl_speed=$(awk '/Download/{print $3" "$4}' ./speedtest-cli/speedtest.log)
         local up_speed=$(awk '/Upload/{print $3" "$4}' ./speedtest-cli/speedtest.log)
         local latency=$(awk '/Latency/{print $2" "$3}' ./speedtest-cli/speedtest.log)
-        if [[ -n "${dl_speed}" && -n "${up_speed}" && -n "${latency}" ]]; then
-            printf "\033[0;33m%-18s\033[0;32m%-18s\033[0;31m%-20s\033[0;36m%-12s\033[0m\n" " ${nodeName}" "${up_speed}" "${dl_speed}" "${latency}"
+        local result_url=$(awk '/Result URL/{print $3}' ./speedtest-cli/speedtest.log).png
+        if [[ -n "${dl_speed}" && -n "${up_speed}" && -n "${latency}" && -n "${result_url}" ]]; then
+            printf "\033[0;33m%-18s\033[0;32m%-18s\033[0;31m%-20s\033[0;36m%-12s\033[0m%-80s\n" " ${nodeName}" "${up_speed}" "${dl_speed}" "${latency}" "${result_url}"
         fi
     fi
 }
@@ -84,10 +85,10 @@ speed() {
     speed_test '27594' 'Guangzhou  CT'
     speed_test '26678' 'Guangzhou  CU'
     speed_test '16192' 'Shenzhen   CU'
-    speed_test '4515'  'Shenzhen   CM'
+    speed_test '28491' 'HuNan 5G   CM'
     speed_test '32155' 'Hongkong   CN'
     speed_test '13623' 'Singapore  SG'
-    speed_test '15047' 'Tokyo      JP'
+    speed_test '21569' 'Tokyo      JP'
 }
 
 io_test() {
@@ -167,7 +168,7 @@ ipv4_info() {
 
 install_speedtest() {
     if  [ ! -e "./speedtest-cli/speedtest" ]; then
-        _64bit && sys_bit=x86_64 || sys_bit=i386
+        sys_bit=$(uname -m)
         url1="https://dl.bintray.com/ookla/download/ookla-speedtest-1.0.0-${sys_bit}-linux.tgz"
         url2="https://dl.lamp.sh/files/ookla-speedtest-1.0.0-${sys_bit}-linux.tgz"
         wget --no-check-certificate -q -T10 -O speedtest.tgz ${url1}
@@ -244,6 +245,6 @@ ioall=$( awk 'BEGIN{print '$ioraw1' + '$ioraw2' + '$ioraw3'}' )
 ioavg=$( awk 'BEGIN{printf "%.1f", '$ioall' / 3}' )
 echo -e " Average I/O speed     : $(_yellow "$ioavg MB/s")"
 next
-install_speedtest && printf "%-18s%-18s%-20s%-12s\n" " Node Name" "Upload Speed" "Download Speed" "Latency"
+install_speedtest && printf "%-18s%-18s%-20s%-12s%-80s\n" " Node Name" "Upload Speed" "Download Speed" "Latency" "Result URL"
 speed && rm -fr speedtest-cli
 next
